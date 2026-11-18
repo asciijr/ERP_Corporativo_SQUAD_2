@@ -1,0 +1,22 @@
+{
+  "name": "erp-corporativo-squad-2",
+  "private": true,
+  "description": "ERP Corporativo — ASCII Soluções em Tecnologia (Squad 2)",
+  "scripts": {
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "backend/**/*.{ts,js,json}": [
+      "npm --prefix backend run lint --"
+    ],
+    "frontend/**/*.{ts,tsx,js,jsx,json,css}": [
+      "npm --prefix frontend run lint --"
+    ]
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.6.0",
+    "@commitlint/config-conventional": "^19.6.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.11"
+  }
+}
