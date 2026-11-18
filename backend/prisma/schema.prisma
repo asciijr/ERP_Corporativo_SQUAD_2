@@ -7,10 +7,114 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model SystemHealth {
-  id        String   @id @default(uuid())
-  status    String   @default("ok")
-  createdAt DateTime @default(now()) @map("created_at")
+enum AccessLevel {
+  PRESIDENCIA
+  DIRETOR
+  MEMBRO
+}
 
-  @@map("system_health")
+enum PlaybookScope {
+  INDIVIDUAL
+  SQUAD
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+model Member {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  avatarUrl    String?
+  roleTitle    String
+  accessLevel  AccessLevel
+  department   String
+  course       String?
+  semester     String?
+  squadName    String?
+  skills       String[]
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  driveCards            DriveCard[]
+  checklists            MemberChecklist[]
+  financialTransactions FinancialTransaction[]
+  auditLogs             AuditLog[]
+}
+
+model DriveCard {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  driveUrl    String
+  category    String
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  createdBy Member @relation(fields: [createdById], references: [id])
+}
+
+model PlaybookItem {
+  id          String        @id @default(uuid())
+  title       String
+  description String
+  scope       PlaybookScope
+  targetSquad String?
+  orderIndex  Int
+  isCompleted Boolean       @default(false)
+
+  checklists MemberChecklist[]
+}
+
+model MemberChecklist {
+  id             String    @id @default(uuid())
+  memberId       String
+  playbookItemId String
+  completed      Boolean   @default(false)
+  completedAt    DateTime?
+
+  member       Member       @relation(fields: [memberId], references: [id])
+  playbookItem PlaybookItem @relation(fields: [playbookItemId], references: [id])
+
+  @@unique([memberId, playbookItemId])
+}
+
+model OkrGoal {
+  id           String   @id @default(uuid())
+  title        String
+  directorate  String
+  currentValue Float
+  targetValue  Float
+  unit         String
+  semester     String
+  updatedAt    DateTime @updatedAt
+}
+
+model FinancialTransaction {
+  id              String          @id @default(uuid())
+  type            TransactionType
+  amount          Decimal         @db.Decimal(12, 2)
+  category        String
+  description     String
+  transactionDate DateTime
+  authorId        String
+  createdAt       DateTime        @default(now())
+
+  author Member @relation(fields: [authorId], references: [id])
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  timestamp DateTime @default(now())
+  authorId  String
+  module    String
+  action    String
+  details   String?
+
+  author Member @relation(fields: [authorId], references: [id])
 }
