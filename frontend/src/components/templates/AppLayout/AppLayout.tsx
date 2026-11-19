@@ -11,6 +11,7 @@ export interface AppLayoutProps {
   canAccessAudit?: boolean;
   sidebarItems?: SidebarNavItem[];
   onLogout?: () => void;
+  onEditProfile?: () => void;
   title?: string;
   children?: ReactNode;
 }
@@ -23,6 +24,7 @@ export function AppLayout({
   canAccessAudit = false,
   sidebarItems,
   onLogout = () => undefined,
+  onEditProfile,
   title,
   children,
 }: AppLayoutProps) {
@@ -44,6 +46,7 @@ export function AppLayout({
           userRoleTitle={userRoleTitle}
           userAvatarUrl={userAvatarUrl}
           onLogout={onLogout}
+          onEditProfile={onEditProfile}
           onOpenMenu={() => setIsMobileMenuOpen(true)}
           title={title}
         />

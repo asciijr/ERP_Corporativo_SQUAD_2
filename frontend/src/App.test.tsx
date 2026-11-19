@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import App, { AppRoutes } from './App';
@@ -17,7 +17,7 @@ function mockAuthMe(profile: AuthMeResponse) {
   );
 }
 
-describe('App — Roteamento e Controle de Acesso (3 Níveis)', () => {
+describe('App — Roteamento, Perfil e Controle de Acesso (3 Níveis)', () => {
   beforeEach(() => {
     localStorage.clear();
   });
@@ -31,7 +31,7 @@ describe('App — Roteamento e Controle de Acesso (3 Níveis)', () => {
     render(<App />);
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /ACESSO AO ERP/i })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /ACESSO AO SISTEMA/i })).toBeInTheDocument();
     });
   });
 
@@ -132,5 +132,56 @@ describe('App — Roteamento e Controle de Acesso (3 Níveis)', () => {
     expect(screen.getByRole('link', { name: 'Playbook e OKRs' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Fluxo de Caixa' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Logs de Auditoria' })).toBeInTheDocument();
+  });
+
+  it('deve navegar para /perfil ao clicar em Editar perfil no dropdown do Header e encerrar sessão ao clicar em Sair', async () => {
+    mockAuthMe({
+      id: 'uuid-pres',
+      name: 'Ana Clara',
+      email: 'presidencia@ascii.org.br',
+      roleTitle: 'Presidente',
+      systemRole: 'PRESIDENCIA',
+      department: 'PRESIDENCIA',
+      avatarUrl: null,
+      isPresidencia: true,
+      isDirector: true,
+      canAccessFinance: true,
+      isMember: false,
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/membros']}>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /DIRETÓRIO DE MEMBROS/i })).toBeInTheDocument();
+    });
+
+    const profileTrigger = screen.getByRole('button', {
+      name: /Menu de perfil de Ana Clara/i,
+    });
+    fireEvent.click(profileTrigger);
+
+    const editProfileItem = screen.getByRole('menuitem', {
+      name: 'Editar perfil',
+    });
+    fireEvent.click(editProfileItem);
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /MEU PERFIL/i })).toBeInTheDocument();
+    });
+    expect(screen.getAllByText('presidencia@ascii.org.br').length).toBeGreaterThan(0);
+
+    fireEvent.click(screen.getByRole('button', { name: /Menu de perfil de Ana Clara/i }));
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Sair' }));
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /ACESSO AO SISTEMA/i })).toBeInTheDocument();
+    });
+    expect(localStorage.getItem(AUTH_TOKEN_STORAGE_KEY)).toBeNull();
   });
 });

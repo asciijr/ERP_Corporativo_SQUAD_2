@@ -23,7 +23,7 @@ describe('LoginPage', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByRole('heading', { name: /ACESSO AO ERP/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /ACESSO AO SISTEMA/i })).toBeInTheDocument();
     expect(screen.getByLabelText('E-mail corporativo')).toBeInTheDocument();
     expect(screen.getByLabelText('Senha')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Entrar' })).toBeInTheDocument();

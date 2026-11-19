@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
+import logoHorizontalWhite from '../../../assets/brand/Logo ASCII_Horizontal_Branco.png';
 
 export interface SidebarNavItem {
   label: string;
@@ -180,34 +181,19 @@ export function Sidebar({
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="flex h-16 items-center justify-between border-b border-navy-700 px-6">
-          <div className="flex items-center gap-3">
-            <div
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-brand-blue bg-navy-700"
-              aria-hidden="true"
-            >
-              <svg className="h-5 w-5 text-brand-green" viewBox="0 0 24 24" fill="currentColor">
-                <circle cx="7" cy="7" r="2" />
-                <circle cx="17" cy="7" r="2" />
-                <circle cx="12" cy="12" r="2.2" />
-                <circle cx="7" cy="17" r="2" />
-                <circle cx="17" cy="17" r="2" />
-              </svg>
-            </div>
-            <div>
-              <span className="block font-display text-lg font-bold uppercase tracking-wider text-surface">
-                ASCII
-              </span>
-              <span className="block text-xs text-blue-200">ERP Corporativo</span>
-            </div>
-          </div>
+        <div className="flex h-20 items-center justify-between border-b border-navy-700 px-6 py-4">
+          <img
+            src={logoHorizontalWhite}
+            alt="ASCII Soluções em Tecnologia"
+            className="h-10 w-auto max-w-full object-contain"
+          />
 
           {onClose && (
             <button
               type="button"
               onClick={onClose}
               aria-label="Fechar menu de navegação"
-              className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-md text-surface hover:bg-navy-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue lg:hidden"
+              className="inline-flex min-h-10 min-w-10 cursor-pointer items-center justify-center rounded-md text-surface transition-all duration-150 ease-out hover:bg-navy-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue lg:hidden"
             >
               <svg
                 className="h-5 w-5"
@@ -230,10 +216,10 @@ export function Sidebar({
               to={item.path}
               onClick={onClose}
               className={({ isActive }) =>
-                `group relative flex min-h-10 items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-surface transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue ${
+                `group relative flex min-h-10 cursor-pointer items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-surface transition-all duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue ${
                   isActive
                     ? 'border-l-4 border-brand-green bg-navy-700 font-semibold'
-                    : 'hover:bg-navy-700/70'
+                    : 'hover:bg-navy-700/70 active:bg-navy-700'
                 }`
               }
             >
@@ -242,10 +228,6 @@ export function Sidebar({
             </NavLink>
           ))}
         </nav>
-
-        <div className="border-t border-navy-700 px-6 py-3 text-xs text-blue-200">
-          ASCII Soluções em Tecnologia
-        </div>
       </aside>
     </>
   );

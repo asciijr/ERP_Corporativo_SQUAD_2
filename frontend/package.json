@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Frontend ERP Corporativo — ASCII Soluções em Tecnologia (Squad 2)",
+  "description": "Frontend — ASCII Soluções em Tecnologia (Squad 2)",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",

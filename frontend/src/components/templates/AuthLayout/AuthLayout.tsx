@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import logoIsolatedColors from '../../../assets/brand/Logo ASCII_Isolado_Cores.png';
 
 export interface AuthLayoutProps {
   children: ReactNode;
@@ -29,25 +30,12 @@ export function AuthLayout({ children }: AuthLayoutProps) {
       </svg>
 
       <div className="relative z-10 w-full max-w-md rounded-xl border border-border bg-surface p-6 shadow-card sm:p-8">
-        <div className="mb-6 flex items-center justify-center gap-3">
-          <div
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-brand-navy text-surface"
-            aria-hidden="true"
-          >
-            <svg className="h-6 w-6 text-brand-green" viewBox="0 0 24 24" fill="currentColor">
-              <circle cx="7" cy="7" r="2" />
-              <circle cx="17" cy="7" r="2" />
-              <circle cx="12" cy="12" r="2.2" />
-              <circle cx="7" cy="17" r="2" />
-              <circle cx="17" cy="17" r="2" />
-            </svg>
-          </div>
-          <div>
-            <span className="block font-display text-xl font-bold uppercase tracking-wider text-brand-navy">
-              ASCII
-            </span>
-            <span className="block text-xs font-medium text-muted">Soluções em Tecnologia</span>
-          </div>
+        <div className="mb-6 flex justify-center">
+          <img
+            src={logoIsolatedColors}
+            alt="ASCII Soluções em Tecnologia"
+            className="h-20 w-auto object-contain"
+          />
         </div>
 
         {children}

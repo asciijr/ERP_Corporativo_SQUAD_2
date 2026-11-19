@@ -1,8 +1,9 @@
 import { ReactNode } from 'react';
-import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Outlet, Route, Routes, useNavigate } from 'react-router-dom';
 import { AppLayout } from './components/templates/AppLayout';
 import { AuthProvider, useAuth } from './hooks/AuthContext';
 import { LoginPage } from './pages/LoginPage';
+import { ProfilePage } from './pages/ProfilePage';
 
 interface ModulePlaceholderProps {
   title: string;
@@ -19,7 +20,7 @@ function ModulePlaceholder({ title, subtitle, description }: ModulePlaceholderPr
       </header>
 
       <section className="rounded-lg border border-border bg-surface p-6 shadow-card">
-        <h2 className="text-lg font-extrabold text-brand-blue">Módulo Corporativo ASCII</h2>
+        <h2 className="text-lg font-extrabold text-brand-blue">Sistema ASCII</h2>
         <p className="mt-2 text-sm text-brand-navy">{description}</p>
       </section>
     </div>
@@ -29,6 +30,7 @@ function ModulePlaceholder({ title, subtitle, description }: ModulePlaceholderPr
 export function PrivateRoute() {
   const { user, isAuthenticated, isLoading, canAccessFinance, isPresidencia, isDirector, logout } =
     useAuth();
+  const navigate = useNavigate();
 
   if (isLoading) {
     return (
@@ -54,6 +56,7 @@ export function PrivateRoute() {
       canAccessFinance={canAccessFinance}
       canAccessAudit={isPresidencia || isDirector}
       onLogout={logout}
+      onEditProfile={() => navigate('/perfil')}
     >
       <Outlet />
     </AppLayout>
@@ -128,12 +131,13 @@ export function AppRoutes() {
             <PermissionGuard allowed={isPresidencia || isDirector}>
               <ModulePlaceholder
                 title="LOGS DE AUDITORIA"
-                subtitle="Rastreabilidade transversal de ações críticas no ERP"
+                subtitle="Rastreabilidade transversal de ações críticas no sistema"
                 description="Consulte o histórico de operações por autor, módulo e data."
               />
             </PermissionGuard>
           }
         />
+        <Route path="/perfil" element={<ProfilePage />} />
       </Route>
 
       <Route path="/" element={<Navigate to="/membros" replace />} />
