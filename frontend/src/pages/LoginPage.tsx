@@ -1,5 +1,5 @@
 import { FormEvent, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { Button } from '../components/atoms/Button';
 import { FormField } from '../components/molecules/FormField';
 import { AuthLayout } from '../components/templates/AuthLayout';
@@ -22,7 +22,7 @@ export function LoginPage() {
     event.preventDefault();
     setErrorMessage(null);
 
-    const trimmedEmail = email.trim();
+    const trimmedEmail = email.trim().toLowerCase();
     if (!trimmedEmail || !password) {
       setErrorMessage('Preencha o e-mail corporativo e a senha para continuar.');
       return;
@@ -100,6 +100,15 @@ export function LoginPage() {
           </Button>
         </div>
       </form>
+
+      <div className="mt-6 border-t border-border pt-4 text-center text-sm text-brand-navy">
+        <Link
+          to="/cadastro"
+          className="font-semibold text-brand-blue underline-offset-4 transition-colors hover:text-blue-700 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue"
+        >
+          Ainda não tem conta? Criar conta corporativa
+        </Link>
+      </div>
     </AuthLayout>
   );
 }

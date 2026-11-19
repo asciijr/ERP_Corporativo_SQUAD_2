@@ -41,7 +41,7 @@ export function Button({
       type={type}
       disabled={isDisabled}
       aria-busy={loading}
-      className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-md font-semibold transition-all duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue disabled:cursor-not-allowed disabled:opacity-60 ${VARIANT_CLASSES[variant]} ${SIZE_CLASSES[size]} ${className}`.trim()}
+      className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-md font-semibold transition-all duration-150 ease-out hover:shadow-md active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:shadow-none ${VARIANT_CLASSES[variant]} ${SIZE_CLASSES[size]} ${className}`.trim()}
       {...rest}
     >
       {loading && (

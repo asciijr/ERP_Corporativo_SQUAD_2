@@ -3,7 +3,9 @@ import { BrowserRouter, Navigate, Outlet, Route, Routes, useNavigate } from 'rea
 import { AppLayout } from './components/templates/AppLayout';
 import { AuthProvider, useAuth } from './hooks/AuthContext';
 import { LoginPage } from './pages/LoginPage';
+import { MembersDirectoryPage } from './pages/MembersDirectoryPage';
 import { ProfilePage } from './pages/ProfilePage';
+import { RegisterPage } from './pages/RegisterPage';
 
 interface ModulePlaceholderProps {
   title: string;
@@ -81,18 +83,10 @@ export function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/cadastro" element={<RegisterPage />} />
 
       <Route element={<PrivateRoute />}>
-        <Route
-          path="/membros"
-          element={
-            <ModulePlaceholder
-              title="DIRETÓRIO DE MEMBROS"
-              subtitle="Gestão de talentos, cargos, squads e proficiências da ASCII"
-              description="Visualize e gerencie os membros ativos, diretorias e trilhas de desenvolvimento."
-            />
-          }
-        />
+        <Route path="/membros" element={<MembersDirectoryPage />} />
         <Route
           path="/drive"
           element={
