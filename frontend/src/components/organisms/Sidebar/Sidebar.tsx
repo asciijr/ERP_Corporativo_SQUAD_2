@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import logoHorizontalWhite from '../../../assets/brand/Logo ASCII_Horizontal_Branco.png';
 
 export interface SidebarNavItem {
@@ -182,18 +182,25 @@ export function Sidebar({
         }`}
       >
         <div className="flex h-20 items-center justify-between border-b border-navy-700 px-6 py-4">
-          <img
-            src={logoHorizontalWhite}
-            alt="ASCII Soluções em Tecnologia"
-            className="h-10 w-auto max-w-full object-contain"
-          />
+          <Link
+            to="/membros"
+            onClick={onClose}
+            aria-label="Voltar para a página inicial"
+            className="flex cursor-pointer items-center rounded-md transition-all duration-150 ease-out hover:scale-[1.02] hover:opacity-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue"
+          >
+            <img
+              src={logoHorizontalWhite}
+              alt="ASCII Soluções em Tecnologia"
+              className="h-10 w-auto max-w-full object-contain"
+            />
+          </Link>
 
           {onClose && (
             <button
               type="button"
               onClick={onClose}
               aria-label="Fechar menu de navegação"
-              className="inline-flex min-h-10 min-w-10 cursor-pointer items-center justify-center rounded-md text-surface transition-all duration-150 ease-out hover:bg-navy-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue lg:hidden"
+              className="ml-2 inline-flex min-h-10 min-w-10 cursor-pointer items-center justify-center rounded-md text-surface transition-all duration-150 ease-out hover:bg-navy-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue lg:hidden"
             >
               <svg
                 className="h-5 w-5"
@@ -219,7 +226,7 @@ export function Sidebar({
                 `group relative flex min-h-10 cursor-pointer items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-surface transition-all duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue ${
                   isActive
                     ? 'border-l-4 border-brand-green bg-navy-700 font-semibold'
-                    : 'hover:bg-navy-700/70 active:bg-navy-700'
+                    : 'hover:translate-x-1 hover:bg-navy-700 active:bg-navy-700'
                 }`
               }
             >

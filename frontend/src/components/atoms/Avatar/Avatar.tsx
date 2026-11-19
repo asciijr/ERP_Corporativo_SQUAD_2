@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export type AvatarSize = 'sm' | 'md' | 'lg';
 
@@ -54,6 +54,11 @@ function getDeterministicToneClass(name: string): string {
 
 export function Avatar({ name, avatarUrl, size = 'md', className = '' }: AvatarProps) {
   const [imageError, setImageError] = useState<boolean>(false);
+
+  useEffect(() => {
+    setImageError(false);
+  }, [avatarUrl]);
+
   const showImage = Boolean(avatarUrl && !imageError);
   const initials = getInitials(name);
   const toneClass = getDeterministicToneClass(name);

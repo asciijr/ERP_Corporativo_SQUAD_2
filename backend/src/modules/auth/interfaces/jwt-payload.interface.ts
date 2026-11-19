@@ -24,6 +24,10 @@ export interface LoginResponse {
   user: AuthenticatedUser;
 }
 
+export interface RegisterResponse extends LoginResponse {
+  accessLevel: AccessLevel;
+}
+
 export interface AuthMeResponse extends AuthenticatedUser {
   isPresidencia: boolean;
   isDirector: boolean;

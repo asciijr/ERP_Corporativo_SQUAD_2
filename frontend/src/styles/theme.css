@@ -1,9 +1,9 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   /* Fontes */
-  --font-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Archive", "Archivo", "Montserrat", ui-sans-serif, sans-serif;
+  --font-sans: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Archive', 'Archivo', 'Montserrat', ui-sans-serif, sans-serif;
 
   /* Marca (valores oficiais) */
   --color-brand-blue: #1756ae;
@@ -14,26 +14,26 @@
   --color-blue-50: #eef4fc;
   --color-blue-100: #dce8f8;
   --color-blue-200: #b9d1f1;
-  --color-blue-700: #124694;   /* hover do azul claro */
-  --color-navy-700: #0a1a7a;   /* hover/itens ativos sobre navy */
+  --color-blue-700: #124694; /* hover do azul claro */
+  --color-navy-700: #0a1a7a; /* hover/itens ativos sobre navy */
   --color-green-100: #e6f8dc;
-  --color-green-600: #5fbf33;  /* hover do verde */
+  --color-green-600: #5fbf33; /* hover do verde */
 
   /* Neutros */
   --color-surface: #ffffff;
-  --color-canvas: #f6f8fb;     /* fundo da área de conteúdo */
+  --color-canvas: #f6f8fb; /* fundo da área de conteúdo */
   --color-border: #dde3ec;
-  --color-muted: #6b768a;      /* texto secundário */
+  --color-muted: #6b768a; /* texto secundário */
 
   /* Funcionais (fora da paleta da marca, só para feedback) */
   --color-success: var(--color-brand-green);
-  --color-danger: #d64545;     /* saídas financeiras, erros, ações destrutivas */
+  --color-danger: #d64545; /* saídas financeiras, erros, ações destrutivas */
   --color-danger-100: #fbe6e6;
   --color-warning: #f5a524;
 
   /* Raios e sombras */
-  --radius-md: 8px;    /* botões, inputs */
-  --radius-lg: 12px;   /* cards */
-  --radius-xl: 16px;   /* modais */
+  --radius-md: 8px; /* botões, inputs */
+  --radius-lg: 12px; /* cards */
+  --radius-xl: 16px; /* modais */
   --shadow-card: 0 1px 2px rgb(5 15 96 / 0.06), 0 4px 12px rgb(5 15 96 / 0.06);
 }

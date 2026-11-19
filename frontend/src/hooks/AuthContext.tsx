@@ -14,6 +14,7 @@ import {
   AuthContextValue,
   AuthMeResponse,
   LoginCredentials,
+  RegisterCredentials,
 } from '../types/auth';
 
 export const AUTH_TOKEN_STORAGE_KEY = 'ascii_erp_token';
@@ -37,21 +38,23 @@ function computePermissions(user: AuthenticatedUser | AuthMeResponse | null): Pe
     };
   }
 
+  const effectiveRole = user.systemRole ?? user.accessLevel ?? 'MEMBRO';
+
   const isPresidencia =
-    'isPresidencia' in user ? user.isPresidencia : user.systemRole === 'PRESIDENCIA';
+    'isPresidencia' in user ? user.isPresidencia : effectiveRole === 'PRESIDENCIA';
 
   const isDirector =
     'isDirector' in user
       ? user.isDirector
-      : user.systemRole === 'PRESIDENCIA' || user.systemRole === 'DIRETOR';
+      : effectiveRole === 'PRESIDENCIA' || effectiveRole === 'DIRETOR';
 
   const canAccessFinance =
     'canAccessFinance' in user
       ? user.canAccessFinance
-      : user.systemRole === 'PRESIDENCIA' ||
-        (user.systemRole === 'DIRETOR' && user.department === 'FINANCEIRO');
+      : effectiveRole === 'PRESIDENCIA' ||
+        (effectiveRole === 'DIRETOR' && user.department === 'FINANCEIRO');
 
-  const isMember = 'isMember' in user ? user.isMember : user.systemRole === 'MEMBRO';
+  const isMember = 'isMember' in user ? user.isMember : effectiveRole === 'MEMBRO';
 
   return {
     isPresidencia,
@@ -121,6 +124,33 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setUser(response.user);
   }, []);
 
+  const register = useCallback(async (payload: RegisterCredentials) => {
+    const response = await authService.register(payload);
+    localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, response.accessToken);
+    setToken(response.accessToken);
+    setUser(response.user);
+  }, []);
+
+  const updateUser = useCallback((partialUser: Partial<AuthenticatedUser>) => {
+    setUser((previous) => {
+      if (!previous) {
+        return previous;
+      }
+      const nextRole =
+        partialUser.systemRole ??
+        partialUser.accessLevel ??
+        previous.systemRole ??
+        previous.accessLevel ??
+        'MEMBRO';
+      return {
+        ...previous,
+        ...partialUser,
+        systemRole: nextRole,
+        accessLevel: nextRole,
+      };
+    });
+  }, []);
+
   const logout = useCallback(() => {
     clearSession();
   }, [clearSession]);
@@ -134,10 +164,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       isAuthenticated: Boolean(token && user),
       isLoading,
       login,
+      register,
+      updateUser,
       logout,
       ...permissions,
     }),
-    [user, token, isLoading, login, logout, permissions],
+    [user, token, isLoading, login, register, updateUser, logout, permissions],
   );
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;

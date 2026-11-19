@@ -1,5 +1,6 @@
 import { ReactNode, useState } from 'react';
 import { Outlet } from 'react-router-dom';
+import { Footer } from '../../organisms/Footer';
 import { Header } from '../../organisms/Header';
 import { Sidebar, SidebarNavItem } from '../../organisms/Sidebar';
 
@@ -40,7 +41,7 @@ export function AppLayout({
         onClose={() => setIsMobileMenuOpen(false)}
       />
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-h-screen min-w-0 flex-1 flex-col">
         <Header
           userName={userName}
           userRoleTitle={userRoleTitle}
@@ -54,6 +55,8 @@ export function AppLayout({
         <main className="flex-1 bg-canvas p-4 lg:p-6">
           <div className="mx-auto w-full max-w-7xl">{children ?? <Outlet />}</div>
         </main>
+
+        <Footer />
       </div>
     </div>
   );
