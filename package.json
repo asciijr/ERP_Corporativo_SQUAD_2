@@ -6,11 +6,11 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "backend/**/*.{ts,js,json}": [
-      "npm --prefix backend run lint --"
+    "backend/{src,test}/**/*.ts": [
+      "npm --prefix backend exec -- eslint --fix"
     ],
-    "frontend/**/*.{ts,tsx,js,jsx,json,css}": [
-      "npm --prefix frontend run lint --"
+    "frontend/src/**/*.{ts,tsx}": [
+      "npm --prefix frontend exec -- eslint --fix"
     ]
   },
   "devDependencies": {
