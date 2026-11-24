@@ -174,7 +174,10 @@ export class FinanceService {
     const monthlyMap = new Map<number, { income: Prisma.Decimal; expense: Prisma.Decimal }>(
       period.months.map((month) => [month, { income: ZERO, expense: ZERO }]),
     );
-    const categoryMap = new Map<string, { income: Prisma.Decimal; expense: Prisma.Decimal }>();
+    const categoryMap = new Map<
+      string,
+      { label: string; income: Prisma.Decimal; expense: Prisma.Decimal }
+    >();
 
     for (const transaction of transactions) {
       const amount = toDecimal(transaction.amount);
@@ -193,8 +196,10 @@ export class FinanceService {
         else monthBucket.expense = monthBucket.expense.plus(amount);
       }
 
-      const categoryKey = transaction.category;
-      const categoryBucket = categoryMap.get(categoryKey) ?? { income: ZERO, expense: ZERO };
+      // Agrupa ignorando caixa/espaços (mesma regra do filtro insensitive do findAll); rótulo = 1ª grafia vista
+      const label = transaction.category.trim();
+      const categoryKey = label.toUpperCase();
+      const categoryBucket = categoryMap.get(categoryKey) ?? { label, income: ZERO, expense: ZERO };
       if (isIncome) categoryBucket.income = categoryBucket.income.plus(amount);
       else categoryBucket.expense = categoryBucket.expense.plus(amount);
       categoryMap.set(categoryKey, categoryBucket);
@@ -212,9 +217,9 @@ export class FinanceService {
       };
     });
 
-    const byCategory: CategoryTotalItem[] = Array.from(categoryMap.entries())
-      .map(([category, bucket]) => ({
-        category,
+    const byCategory: CategoryTotalItem[] = Array.from(categoryMap.values())
+      .map((bucket) => ({
+        category: bucket.label,
         income: toMoney(bucket.income),
         expense: toMoney(bucket.expense),
         total: toMoney(bucket.income.plus(bucket.expense)),

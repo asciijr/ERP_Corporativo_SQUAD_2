@@ -280,6 +280,20 @@ describe('FinanceService', () => {
       ]);
     });
 
+    it('should merge categories that differ only by case or surrounding spaces', async () => {
+      prisma.financialTransaction.findMany.mockResolvedValue([
+        tx(TransactionType.INCOME, '12500.00', 'PROJETOS', '2026-11-01'),
+        tx(TransactionType.INCOME, '1500.50', 'Projetos', '2026-11-02'),
+        tx(TransactionType.EXPENSE, '20.00', ' projetos ', '2026-11-03'),
+      ]);
+
+      const summary = await service.getSummary({ year: 2026, month: 11 });
+
+      expect(summary.byCategory).toEqual([
+        { category: 'PROJETOS', income: 14000.5, expense: 20, total: 14020.5 },
+      ]);
+    });
+
     it('should cover the whole year when neither month nor semester is sent', async () => {
       prisma.financialTransaction.findMany.mockResolvedValue([]);
 
