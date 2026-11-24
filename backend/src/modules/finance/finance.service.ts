@@ -81,6 +81,8 @@ const authorSelect = { select: { id: true, name: true } } as const;
 
 const ZERO = new Prisma.Decimal(0);
 
+const DEFAULT_PAGE_SIZE = 100;
+
 function toDecimal(value: DecimalLike): Prisma.Decimal {
   return new Prisma.Decimal(value.toString());
 }
@@ -104,7 +106,8 @@ export class FinanceService {
       throw new BadRequestException('amount deve ser maior que zero');
     }
 
-    const transactionDate = new Date(dto.transactionDate);
+    // Usa só o dia do calendário enviado (YYYY-MM-DD) em UTC, para o offset do cliente não trocar o mês
+    const transactionDate = new Date(`${dto.transactionDate.slice(0, 10)}T00:00:00.000Z`);
     if (Number.isNaN(transactionDate.getTime())) {
       throw new BadRequestException('transactionDate inválida');
     }
@@ -151,10 +154,15 @@ export class FinanceService {
       where.category = { equals: query.category, mode: 'insensitive' };
     }
 
+    const page = query.page ?? 1;
+    const pageSize = query.pageSize ?? DEFAULT_PAGE_SIZE;
+
     const transactions = (await this.prisma.financialTransaction.findMany({
       where,
       include: { author: authorSelect },
       orderBy: [{ transactionDate: 'desc' }, { createdAt: 'desc' }],
+      skip: (page - 1) * pageSize,
+      take: pageSize,
     })) as TransactionRecord[];
 
     return transactions.map((transaction) => this.toResponse(transaction));
@@ -251,7 +259,15 @@ export class FinanceService {
       throw new NotFoundException('Lançamento não encontrado');
     }
 
-    await this.prisma.financialTransaction.delete({ where: { id } });
+    try {
+      await this.prisma.financialTransaction.delete({ where: { id } });
+    } catch (error) {
+      // P2025: outro request apagou o registro entre o findUnique e o delete
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+        throw new NotFoundException('Lançamento não encontrado');
+      }
+      throw error;
+    }
 
     await this.auditService.log({
       authorId,

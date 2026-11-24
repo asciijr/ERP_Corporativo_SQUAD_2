@@ -6,6 +6,7 @@ import { validate } from 'class-validator';
 import { AuditService } from '../../shared/audit/audit.service';
 import { PrismaService } from '../../shared/database/prisma.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
+import { ListTransactionsQueryDto } from './dto/list-transactions-query.dto';
 import { SummaryQueryDto } from './dto/summary-query.dto';
 import { FINANCE_AUDIT_MODULE, FinanceService } from './finance.service';
 
@@ -102,6 +103,26 @@ describe('FinanceService', () => {
       expect(result.author).toEqual(author);
     });
 
+    it('should keep the calendar day sent by the client regardless of the timezone offset', async () => {
+      prisma.financialTransaction.create.mockResolvedValue({
+        id: 'tx-2',
+        ...dto,
+        amount: new Prisma.Decimal('1500.50'),
+        transactionDate: new Date('2026-11-30T00:00:00.000Z'),
+        createdAt: new Date('2026-11-30T12:00:00.000Z'),
+        authorId: AUTHOR_ID,
+        author,
+      });
+
+      await service.createTransaction(AUTHOR_ID, {
+        ...dto,
+        transactionDate: '2026-11-30T22:00:00-03:00',
+      });
+
+      const createArgs = prisma.financialTransaction.create.mock.calls[0][0];
+      expect(createArgs.data.transactionDate.toISOString()).toBe('2026-11-30T00:00:00.000Z');
+    });
+
     it.each([0, -10])(
       'should reject amount %p without touching the database or the audit log',
       async (amount) => {
@@ -167,6 +188,34 @@ describe('FinanceService', () => {
       await service.findAll({});
 
       expect(prisma.financialTransaction.findMany.mock.calls[0][0].where).toEqual({});
+    });
+
+    it('should paginate with page 1 and pageSize 100 by default', async () => {
+      prisma.financialTransaction.findMany.mockResolvedValue([]);
+
+      await service.findAll({});
+
+      const args = prisma.financialTransaction.findMany.mock.calls[0][0];
+      expect(args.skip).toBe(0);
+      expect(args.take).toBe(100);
+    });
+
+    it('should apply page and pageSize when sent', async () => {
+      prisma.financialTransaction.findMany.mockResolvedValue([]);
+
+      await service.findAll({ page: 3, pageSize: 20 });
+
+      const args = prisma.financialTransaction.findMany.mock.calls[0][0];
+      expect(args.skip).toBe(40);
+      expect(args.take).toBe(20);
+    });
+
+    it.each([
+      ['page zero', { page: '0' }, 'page'],
+      ['pageSize acima de 100', { pageSize: '101' }, 'pageSize'],
+    ])('should reject %s in the query', async (_label, query, field) => {
+      const errors = await validate(plainToInstance(ListTransactionsQueryDto, query));
+      expect(errors.map((error) => error.property)).toContain(field);
     });
 
     it('should require year when month is sent', async () => {
@@ -338,6 +387,24 @@ describe('FinanceService', () => {
         NotFoundException,
       );
       expect(prisma.financialTransaction.delete).not.toHaveBeenCalled();
+      expect(auditService.log).not.toHaveBeenCalled();
+    });
+
+    it('should throw 404 and not audit when the transaction is deleted concurrently', async () => {
+      prisma.financialTransaction.findUnique.mockResolvedValue({
+        id: 'tx-9',
+        type: TransactionType.EXPENSE,
+        amount: new Prisma.Decimal('42.00'),
+        category: 'Eventos',
+      });
+      prisma.financialTransaction.delete.mockRejectedValue(
+        new Prisma.PrismaClientKnownRequestError('Record to delete does not exist.', {
+          code: 'P2025',
+          clientVersion: '5.22.0',
+        }),
+      );
+
+      await expect(service.removeTransaction(AUTHOR_ID, 'tx-9')).rejects.toThrow(NotFoundException);
       expect(auditService.log).not.toHaveBeenCalled();
     });
   });
