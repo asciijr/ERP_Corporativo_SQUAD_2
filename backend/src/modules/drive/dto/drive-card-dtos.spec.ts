@@ -38,7 +38,8 @@ async function rejectedFields(
     await runPipe(metatype, value, type);
   } catch (error) {
     if (error instanceof BadRequestException) {
-      return error.getResponse() as string[];
+      // Nest wraps the array as { statusCode, message, error }.
+      return (error.getResponse() as { message: string[] }).message;
     }
     throw error;
   }
