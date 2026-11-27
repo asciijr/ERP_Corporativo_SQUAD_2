@@ -11,8 +11,7 @@ import { DatabaseModule } from './shared/database/database.module';
 @Module({
  feat/14-api-checklist-playbook
   imports: [DatabaseModule, AuditModule, AuthModule, MembersModule, TrainingOkrsModule],
-
-  imports: [DatabaseModule, AuditModule, AuthModule, MembersModule, FinanceModule],
+  imports: [DatabaseModule, AuditModule, AuthModule, MembersModule, FinanceModule]
  develop
   controllers: [AppController],
   providers: [AppService],
