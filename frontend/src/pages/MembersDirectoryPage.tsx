@@ -56,6 +56,7 @@ export function MembersDirectoryPage() {
   const visibleMembers = useMemo(() => {
     return members.filter(
       (member) =>
+        member.isActive &&
         member.accessLevel !== 'PRESIDENCIA' &&
         member.roleTitle.trim().toLowerCase() !== 'admin' &&
         member.department.trim().toUpperCase() !== 'ADMIN',
